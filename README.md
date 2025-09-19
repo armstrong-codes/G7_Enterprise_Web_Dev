@@ -17,7 +17,9 @@ This is Draw.io link: https://drive.google.com/file/d/1T7GoRHwGNc2ddbfRLX7-H-Gn9
 ### Database documentation:
 In this step, we designed database with ERD(Entity Relational Diagram) and then implemented it using SQL(Structured Query Language) so that we can create the exact database when we are done designing the front-end part.
 
-We first identified what entities we will need and after we designed a diagram to represent those entities and the atrributes each holds and also the relationship they have between themselves which includes 1 to many, etc...
+We first identified what entities we need and after we designed a diagram to represent those entities and the atrributes each holds and also the relationship they have between themselves which includes 1 to many, etc...
+
+Then we designed them according to how the system flows, We imagined how we want our system to work and from there we got what entities needed for our system to work as intended. Here is where we found that we need users table, transaction table to hold transactions and all of the other tables/entities that will help the system to store data effectively and efficientlt using their respective attributes which enhance the accuracy and integrity of the stored data by storing them in the related column names and assigning them with effective constraint for more data security.
 
 After drawing the ERD, we applied the diagram into SQL so that we can turn our diagram into a real database using sql language. That is where we created our file and called it database_setup with sql extension that it can be ran whenever we need to use it. 
 
