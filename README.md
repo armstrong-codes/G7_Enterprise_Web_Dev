@@ -25,6 +25,8 @@ Within this file, is where the magic was done. This is where we created our data
 
 Afterwards, i did serialization shifting SQL file to a JSON file. I got the SQL structure and rewrote it in JSON structure where tables are curly braces, attributes are keys and data are values. And all of them are inside a square bracket which represent the database in this case.
 
+This below is the mapping of SQL to JSON:
+
 | SQL Table / Column                         | JSON Representation                   |
 | ------------------------------------------ | ------------------------------------- |
 | **User.user\_id**                         | `user_id`                             |
