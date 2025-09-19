@@ -1,4 +1,4 @@
-# G7 Enterprise Web DEv
+# G7 Enterprise Web Dev
 
 ### Project description:
 This project is about creating MOMO app. Which will be used to receive and process the inserted data for providing the required information.
