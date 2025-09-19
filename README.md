@@ -40,7 +40,7 @@ Afterwards, i did serialization shifting SQL file to a JSON file. I got the SQL 
 | **Transaction.status**                    | `status`                              |
 | **Transaction.transaction\_date**         | `transaction_date`                    |
 | **Transaction\_categories.category\_name** | `category.category_name`              |
-| **System\_Log.action, log\_message**      | `logs[].action`, `logs[].log_message` |
-| **System\_Log.timestamp**                 | `logs[].timestamp`                    |
+| **System\_Log.action, log\_message**      | `log[].action`, `log[].log_message` |
+| **System\_Log.timestamp**                 | `log[].timestamp`                    |
 
 
