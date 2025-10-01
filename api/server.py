@@ -4,13 +4,13 @@ import base64
 from urllib.parse import urlparse
 
 # Load transactions from a JSON file
-with open('../data/sms_momo.json', 'r') as f:
+with open('./data/transactions.json', 'r') as f:
     transactions = json.load(f)
 
 USERNAME = "admin"
 PASSWORD = "1234"
 HOST = "localhost"
-PORT = 8000
+PORT = 8080
 
 class RequestHandler(http.server.BaseHTTPRequestHandler):
     def _authenticate(self):
@@ -76,7 +76,7 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
             transactions.append(new_transaction)
 
             # Save the updated transactions to the file
-            with open('../data/sms_momo.json', 'w') as f:
+            with open('../data/transactions.json', 'w') as f:
                 json.dump(transactions, f, indent=4)
 
             self.send_response(201)
@@ -104,7 +104,7 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
                     transactions[i] = updated_transaction
 
                     # Save the updated transactions to the file
-                    with open('../data/sms_momo.json', 'w') as f:
+                    with open('../data/transactions.json', 'w') as f:
                         json.dump(transactions, f, indent=4)
 
                     self.send_response(200)
