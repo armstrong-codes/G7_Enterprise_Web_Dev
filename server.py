@@ -1,10 +1,12 @@
 import http.server
 import json
 import base64
+import os
 from urllib.parse import urlparse
 
 # Load transactions from a JSON file
-with open('./sms_momo.json', 'r') as f:
+DATA_FILE = './sms_momo.json'
+with open(DATA_FILE, 'r') as f:
     transactions = json.load(f)
 
 USERNAME = "admin"
@@ -20,8 +22,12 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
             return False
 
         encoded_credentials = auth_header.split(' ')[1]
-        decoded_credentials = base64.b64decode(encoded_credentials).decode()
-        username, password = decoded_credentials.split(':')
+        try:
+            decoded_credentials = base64.b64decode(encoded_credentials).decode()
+            username, password = decoded_credentials.split(':', 1)
+        except Exception:
+            self._send_unauthorized()
+            return False
 
         if username == USERNAME and password == PASSWORD:
             return True
@@ -76,7 +82,7 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
             transactions.append(new_transaction)
 
             # Save the updated transactions to the file
-            with open('../data/sms_momo.json', 'w') as f:
+            with open(DATA_FILE, 'w') as f:
                 json.dump(transactions, f, indent=4)
 
             self.send_response(201)
@@ -104,7 +110,7 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
                     transactions[i] = updated_transaction
 
                     # Save the updated transactions to the file
-                    with open('../data/sms_momo.json', 'w') as f:
+                    with open(DATA_FILE, 'w') as f:
                         json.dump(transactions, f, indent=4)
 
                     self.send_response(200)
@@ -121,11 +127,36 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(json.dumps({"error": "Endpoint not found"}).encode())
 
-def run(server_class=http.server.HTTPServer, handler_class=RequestHandler, host=HOST, port=PORT):
-    server_address = (host, port)
-    httpd = server_class(server_address, handler_class)
-    print(f"Starting server on {host}:{port}...")
-    httpd.serve_forever()
+    def do_DELETE(self):
+        if not self._authenticate():
+            return
 
-if __name__ == '__main__':
-    run()
+        if self.path.startswith('/transactions/'):
+            transaction_id = self.path.split('/')[-1]
+            for i, transaction in enumerate(transactions):
+                if transaction['transaction_id'] == transaction_id:
+                    deleted = transactions.pop(i)
+
+                    # Save updated file
+                    with open(DATA_FILE, 'w') as f:
+                        json.dump(transactions, f, indent=4)
+
+                    self.send_response(200)
+                    self.send_header('Content-Type', 'application/json')
+                    self.end_headers()
+                    self.wfile.write(json.dumps({"message": f"Deleted transaction {transaction_id}"}).encode())
+                    return
+
+            self.send_response(404)
+            self.end_headers()
+            self.wfile.write(json.dumps({"error": "Transaction not found"}).encode())
+        else:
+            self.send_response(404)
+            self.end_headers()
+            self.wfile.write(json.dumps({"error": "Endpoint not found"}).encode())
+
+
+if __name__ == "__main__":
+    server = http.server.HTTPServer((HOST, PORT), RequestHandler)
+    print(f"Server running at http://{HOST}:{PORT}")
+    server.serve_forever()
