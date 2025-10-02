@@ -1,5 +1,8 @@
 import xml.etree.ElementTree as ET
 import re
+import json
+import os
+
 
 def parse_sms_xml(file_path):
     tree = ET.parse(file_path)
@@ -60,6 +63,9 @@ def parse_sms_xml(file_path):
 
 
 if __name__ == "__main__":
-    transactions = parse_sms_xml('./modified_sms_v2.xml')
-    for t in transactions:
-        print(t)
+    transactions = parse_sms_xml('../modified_sms_v2.xml')
+    out_path = os.path.join(os.path.dirname(__file__), 'transactions.json')
+    with open(out_path, 'w', encoding='utf-8') as f:
+        json.dump(transactions, f, ensure_ascii=False, indent=2)
+
+    print(f"Extracted {len(transactions)} transactions to {out_path}")
