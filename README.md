@@ -47,4 +47,99 @@ This below is the mapping of SQL to JSON:
 | **System\_Log.action, log\_message**      | `log[].action`, `log[].log_message` |
 | **System\_Log.timestamp**                 | `log[].timestamp`                    |
 
+## REST API Implementation
+
+The project now includes a **secure REST API** for programmatic access to transactions:
+
+**Endpoints:**
+
+| Endpoint | Method | Description | Auth Required |
+|----------|--------|-------------|---------------|
+| /transactions | GET | Retrieve all transactions | Yes |
+| /transactions/<id> | GET | Retrieve a specific transaction | Yes |
+| /transactions | POST | Add a new transaction | Yes |
+| /transactions/<id> | PUT | Update a transaction | Yes |
+| /transactions/<id> | DELETE | Delete a transaction | Yes |
+
+**Authentication & Security:**
+
+* Basic Authentication is implemented for all endpoints.  
+* Demo credentials for testing:  
+  - Admin: `admin` / `password`  
+* Unauthorized access returns `401 Unauthorized`.  
+* Reflection: Basic Auth is simple but weak for production; stronger alternatives include **JWT**, **OAuth2**, and **API keys over HTTPS**.
+
+**Why Basic Auth is Weak:**
+
+* Credentials are sent with every request, often only base64-encoded, making them vulnerable if intercepted.  
+* Without HTTPS, attackers can easily capture usernames and passwords.  
+* No token expiration means compromised credentials remain valid until manually changed.  
+* Lacks fine-grained access control and revocation capabilities.  
+* Recommended alternatives include OAuth2, JWT tokens, and API keys with HTTPS to improve security and control.
+
+**Request Examples (curl):**
+
+```bash
+# List all transactions
+curl -u admin:password http://localhost:8080/transactions
+
+# Get transaction by ID
+curl -u admin:password http://localhost:8080/transactions/1
+
+# Add new transaction
+curl -u admin:password -X POST -H "Content-Type: application/json" \
+    -d '{"id": "13443", "sender": "M-Money", "receiver_name": "Semana", "receiver_phone": null, "amount": 600000.0, "type": "payment", "timestamp": "1715369560245", "body": "TxId: 51732411227. Your payment of 600000 RWF to Samuel Carter 95464 has been completed at 2024-05-10 21:32:32. Your new balance: 987400 RWF. Fee was 0 RWF.Kanda*182*16# wiyandikishe muri poromosiyo ya BivaMoMotima, ugire amahirwe yo gutsindira ibihembo bishimishije."}' \
+    http://localhost:8080/transactions
+```
+
+---
+
+## Data Structures & Algorithms (DSA Integration)
+
+To demonstrate efficient searching:
+
+* **Linear Search**: Scans the transaction list sequentially to find a record by ID (O(n)).  
+* **Dictionary Lookup**: Uses a dictionary index (`id → transaction`) for O(1) average-time lookup.  
+* **Comparison Results (1000*20 searches)**:
+  - Linear search total time: 2.882248 seconds  
+  - Dictionary lookup total time: 0.032148 seconds  
+  - Average linear per lookup: 0.000144112 seconds  
+  - Average dict per lookup: 0.000001607 seconds  
+* **Analysis**: Dictionary lookup is faster because it uses O(1) average-time hashing lookup, while linear search is O(n).  
+
+This demonstrates the importance of selecting proper data structures for performance-critical operations in APIs.
+
+---
+
+## Setup and Usage
+
+1. **Clone the Repository**:
+
+```bash
+git clone <https://github.com/armstrong-codes/G7_Enterprise_Web_Dev.git >
+cd G7_Enterprise_Web_Dev 
+```
+
+2. **Set Up the Database**:
+
+* Navigate to the `/database` folder.  
+* Run the SQL scripts to create the database and tables:
+
+```sql
+source database_setup.sql;
+```
+
+* Update configuration files with your database credentials.
+
+3. **Run the REST API**:
+
+```bash
+python api/api_server.py
+```
+
+* Access endpoints via curl or Postman (see Authentication & Security section).  
+
+4. **Testing & Validation**:
+
+* Test endpoints for GET, POST, PUT, DELETE.
 
